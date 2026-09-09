@@ -14,7 +14,12 @@ pub const Step = gherkin.Step;
 pub const Keyword = gherkin.Keyword;
 pub const Argument = gherkin.Argument;
 pub const DocString = gherkin.DocString;
+pub const Table = @import("table.zig").Table;
 
 test {
     _ = gherkin;
+    _ = @import("expression.zig");
+    _ = @import("tags.zig");
+    _ = @import("convert.zig");
+    _ = @import("table.zig");
 }
