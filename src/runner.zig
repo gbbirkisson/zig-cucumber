@@ -721,6 +721,13 @@ fn dispatch(
 
 /// Runs one scenario against the user's steps module.
 pub fn run(comptime Module: type, comptime scenario: Scenario) anyerror!void {
+    return runScenario(Module, scenario, true);
+}
+
+/// `report` prints a failing step's location to stderr. This file's tests of
+/// expected failures pass false: any stderr write makes an otherwise green
+/// `zig build test` print `failed command:` and dump the output.
+fn runScenario(comptime Module: type, comptime scenario: Scenario, comptime report: bool) anyerror!void {
     @setEvalBranchQuota(1_000_000);
     comptime {
         if (checkModule(Module)) |f| explain(f.err, .{ .decl = f.decl });
@@ -751,7 +758,7 @@ pub fn run(comptime Module: type, comptime scenario: Scenario) anyerror!void {
                 dispatch(Module, scenario.file, step, &world) catch |e| {
                     first_error = e;
                     outcome = if (e == error.SkipZigTest) .skipped else .failed;
-                    if (e != error.SkipZigTest) std.debug.print(
+                    if (report and e != error.SkipZigTest) std.debug.print(
                         "\n{s}:{d}: step failed: {s} {s}\n",
                         .{ scenario.file, step.line, step.keyword_text, step.text },
                     );
@@ -1549,7 +1556,7 @@ const scenario_three: Scenario = .{
 
 test "a failure at step two still reports all three steps" {
     trace_len = 0;
-    try std.testing.expectError(error.Boom, run(Three, scenario_three));
+    try std.testing.expectError(error.Boom, runScenario(Three, scenario_three, false));
     try std.testing.expectEqualDeep(&[_][]const u8{
         "before",
         "before_step",
@@ -1692,7 +1699,7 @@ const FailingAfter = struct {
 };
 
 test "a failing after hook does not mask the step's error" {
-    try std.testing.expectError(error.StepFailed, run(FailingAfter, scenario_plain));
+    try std.testing.expectError(error.StepFailed, runScenario(FailingAfter, scenario_plain, false));
 }
 
 var deinit_calls: usize = 0;
@@ -1715,7 +1722,7 @@ const WithDeinit = struct {
 
 test "deinit runs even when a step fails" {
     deinit_calls = 0;
-    try std.testing.expectError(error.Boom, run(WithDeinit, scenario_plain));
+    try std.testing.expectError(error.Boom, runScenario(WithDeinit, scenario_plain, false));
     try std.testing.expectEqual(@as(usize, 1), deinit_calls);
 }
 

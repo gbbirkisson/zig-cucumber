@@ -16,9 +16,9 @@ pub fn build(b: *std.Build) void {
     const dep = b.dependency("zig_cucumber", .{ .target = target, .optimize = optimize });
 
     _ = cucumber_build.addFeatureTests(b, test_step, dep, .{
-        .features = b.path("features"),
+        .features = b.path("test/features"),
         .steps = b.path("test/steps.zig"),
-        .imports = &.{.{ .name = "myapp", .module = mod }},
+        .imports = &.{.{ .name = "calculator", .module = mod }},
         .target = target,
         .optimize = optimize,
         .tags = b.option([]const u8, "tags", "Tag expression selecting scenarios"),

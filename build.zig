@@ -37,6 +37,26 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+
+    // Each example is a standalone project depending on this one by path, so it
+    // gets its own `zig build test` rather than joining this module graph.
+    // Listed rather than discovered: adding one edits this file, which is what
+    // makes the build system notice it.
+    const examples = [_][]const u8{
+        "basic",
+    };
+    const examples_step = b.step("examples", "Run each example's own tests");
+    for (examples) |name| {
+        const run = b.addSystemCommand(&.{ b.graph.zig_exe, "build", "test" });
+        run.setCwd(b.path(b.fmt("examples/{s}", .{name})));
+        run.setName(b.fmt("zig build test ({s})", .{name}));
+        // Nothing declares this command's inputs, so without this it would be
+        // cached and a broken example would keep reporting success.
+        run.has_side_effects = true;
+        run.expectExitCode(0);
+        examples_step.dependOn(&run.step);
+    }
+    test_step.dependOn(examples_step);
 }
 
 /// Options for `addFeatureTests`.
