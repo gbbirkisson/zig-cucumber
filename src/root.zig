@@ -18,6 +18,10 @@ pub const run = @import("runner.zig").run;
 pub const Scenario = @import("runner.zig").Scenario;
 pub const Result = @import("runner.zig").Result;
 
+/// The parser's tree types, for a consumer that calls `parse` directly.
+/// `ast.Scenario` is a scenario as written; `Scenario` is one ready to run.
+pub const ast = @import("gherkin.zig");
+
 test {
     _ = gherkin;
     _ = @import("expression.zig");

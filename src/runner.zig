@@ -752,7 +752,7 @@ pub fn run(comptime Module: type, comptime scenario: Scenario) anyerror!void {
                     first_error = e;
                     outcome = if (e == error.SkipZigTest) .skipped else .failed;
                     if (e != error.SkipZigTest) std.debug.print(
-                        "\n{s}:{d}: step failed: {s}{s}\n",
+                        "\n{s}:{d}: step failed: {s} {s}\n",
                         .{ scenario.file, step.line, step.keyword_text, step.text },
                     );
                 };
@@ -1485,7 +1485,7 @@ fn traced() []const []const u8 {
 fn mkStep(comptime text: []const u8, comptime line: u32) gherkin.Step {
     return .{
         .keyword = .given,
-        .keyword_text = "Given ",
+        .keyword_text = "Given",
         .text = text,
         .argument = null,
         .line = line,
@@ -1763,7 +1763,7 @@ const e2e_steps = [_]gherkin.Step{
     mkStep("I add 2", 3),
     .{
         .keyword = .when,
-        .keyword_text = "When ",
+        .keyword_text = "When",
         .text = "the users are",
         .argument = .{ .data_table = &e2e_rows },
         .line = 4,
