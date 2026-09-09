@@ -37,7 +37,7 @@ pub fn parse(comptime T: type, comptime text: []const u8) Error!T {
     };
 }
 
-const Colour = enum { red, green, blue };
+const Color = enum { red, green, blue };
 
 test "every target type" {
     try std.testing.expectEqual(@as(u8, 200), comptime try parse(u8, "200"));
@@ -46,14 +46,14 @@ test "every target type" {
     try std.testing.expectEqual(@as(f32, 3.5), comptime try parse(f32, "3.5"));
     try std.testing.expectEqual(true, comptime try parse(bool, "true"));
     try std.testing.expectEqual(false, comptime try parse(bool, "false"));
-    try std.testing.expectEqual(Colour.green, comptime try parse(Colour, "green"));
+    try std.testing.expectEqual(Color.green, comptime try parse(Color, "green"));
     try std.testing.expectEqualStrings("raw text", comptime try parse([]const u8, "raw text"));
 }
 
 test "an optional is null for an empty cell" {
     try std.testing.expectEqual(@as(?u8, null), comptime try parse(?u8, ""));
     try std.testing.expectEqual(@as(?u8, 7), comptime try parse(?u8, "7"));
-    try std.testing.expectEqual(@as(?Colour, null), comptime try parse(?Colour, ""));
+    try std.testing.expectEqual(@as(?Color, null), comptime try parse(?Color, ""));
 }
 
 test "range violations at both ends" {
@@ -67,7 +67,7 @@ test "every error case" {
     try std.testing.expectError(Error.NotAnInteger, comptime parse(u8, ""));
     try std.testing.expectError(Error.NotAFloat, comptime parse(f64, "x"));
     try std.testing.expectError(Error.NotABool, comptime parse(bool, "yes"));
-    try std.testing.expectError(Error.UnknownEnumField, comptime parse(Colour, "mauve"));
+    try std.testing.expectError(Error.UnknownEnumField, comptime parse(Color, "mauve"));
     try std.testing.expectError(Error.UnsupportedType, comptime parse(struct {}, "x"));
     try std.testing.expectError(Error.UnsupportedType, comptime parse([]const u32, "x"));
     try std.testing.expectError(Error.UnsupportedType, comptime parse([]u8, "x"));

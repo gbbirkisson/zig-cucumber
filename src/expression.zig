@@ -326,14 +326,14 @@ test "captures between literals" {
 }
 
 test "every builtin capture name, and an unknown one becomes custom" {
-    const alts = comptime try compile("{int}{float}{word}{string}{}{Colour}");
+    const alts = comptime try compile("{int}{float}{word}{string}{}{Color}");
     try std.testing.expectEqualDeep(&[_]Alternative{&[_]Segment{
         .{ .capture = .int },
         .{ .capture = .float },
         .{ .capture = .word },
         .{ .capture = .string },
         .{ .capture = .anything },
-        .{ .capture = .{ .custom = "Colour" } },
+        .{ .capture = .{ .custom = "Color" } },
     }}, alts);
 }
 
@@ -547,22 +547,22 @@ test "backtracking never splits a string capture at an escaped quote" {
     try std.testing.expect(comptime match(alts, &.{}, "\"\\\"\"") == null);
 }
 
-const colours = [_]CustomType{.{
-    .name = "Colour",
+const colors = [_]CustomType{.{
+    .name = "Color",
     .alternatives = &[_][]const u8{ "red", "green", "blue" },
 }};
 
 test "a custom capture matches one of its alternatives" {
-    const alts = comptime try compile("I pick {Colour}");
+    const alts = comptime try compile("I pick {Color}");
     try std.testing.expectEqualStrings(
         "green",
-        (comptime match(alts, &colours, "I pick green").?)[0],
+        (comptime match(alts, &colors, "I pick green").?)[0],
     );
-    try std.testing.expect(comptime match(alts, &colours, "I pick mauve") == null);
+    try std.testing.expect(comptime match(alts, &colors, "I pick mauve") == null);
 }
 
 test "an unresolved name never matches, and a later one still resolves" {
-    const alts = comptime try compile("I pick {Colour}");
+    const alts = comptime try compile("I pick {Color}");
     try std.testing.expect(comptime match(alts, &.{}, "I pick red") == null);
 
     const sizes = [_]CustomType{.{
@@ -571,7 +571,7 @@ test "an unresolved name never matches, and a later one still resolves" {
     }};
     try std.testing.expect(comptime match(alts, &sizes, "I pick red") == null);
 
-    const both = sizes ++ colours;
+    const both = sizes ++ colors;
     try std.testing.expectEqualStrings(
         "red",
         (comptime match(alts, &both, "I pick red").?)[0],
@@ -591,7 +591,7 @@ test "the longest alternative wins" {
 }
 
 test "a custom capture beside a literal" {
-    const alts = comptime try compile("paint {Colour} now");
-    const caps = comptime match(alts, &colours, "paint blue now").?;
+    const alts = comptime try compile("paint {Color} now");
+    const caps = comptime match(alts, &colors, "paint blue now").?;
     try std.testing.expectEqualStrings("blue", caps[0]);
 }

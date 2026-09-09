@@ -1,0 +1,10 @@
+.{
+    .name = .arguments,
+    .version = "0.0.0",
+    .fingerprint = 0xfbd6372efc311e27,
+    .minimum_zig_version = "0.17.0-dev.892+54537285c",
+    .dependencies = .{
+        .zig_cucumber = .{ .path = "../.." },
+    },
+    .paths = .{""},
+}

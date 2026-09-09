@@ -778,7 +778,7 @@ fn runScenario(comptime Module: type, comptime scenario: Scenario, comptime repo
 
 test "custom types come from the module's public enum declarations" {
     const M = struct {
-        pub const Colour = enum { red, green_dark, green };
+        pub const Color = enum { red, green_dark, green };
         pub const Size = enum { small, large };
         pub const World = struct { n: i64 = 0 };
         pub const steps = struct {};
@@ -786,7 +786,7 @@ test "custom types come from the module's public enum declarations" {
     };
     const cts = comptime try customTypes(M);
     try std.testing.expectEqual(@as(usize, 2), cts.len);
-    try std.testing.expectEqualStrings("Colour", cts[0].name);
+    try std.testing.expectEqualStrings("Color", cts[0].name);
     try std.testing.expectEqualStrings("green_dark", cts[0].alternatives[1]);
     try std.testing.expectEqualStrings("Size", cts[1].name);
 }
@@ -852,16 +852,16 @@ test "matching ignores the keyword, per keyword agnosticism" {
 
 test "a custom capture resolves through the module's enum" {
     const M = struct {
-        pub const Colour = enum { red, green };
+        pub const Color = enum { red, green };
         pub const steps = struct {
-            pub fn @"I pick {Colour}"(c: Colour) void {
+            pub fn @"I pick {Color}"(c: Color) void {
                 _ = c;
             }
         };
     };
     const r = comptime try resolve(M, "I pick green");
     try std.testing.expectEqualStrings("green", r.captures[0]);
-    try std.testing.expectEqualStrings("Colour", r.kinds[0].custom);
+    try std.testing.expectEqualStrings("Color", r.kinds[0].custom);
 }
 
 test "a World with no init is default constructed" {
@@ -983,34 +983,34 @@ test "unquote strips the quotes and decodes escapes" {
 
 test "a custom capture naming a non-enum or nothing at all is reported" {
     const NotEnum = struct {
-        pub const Colour = struct { r: u8 };
+        pub const Color = struct { r: u8 };
         pub const steps = struct {
-            pub fn @"I pick {Colour}"(c: u8) void {
+            pub fn @"I pick {Color}"(c: u8) void {
                 _ = c;
             }
         };
     };
     try std.testing.expectError(
         BindError.CustomTypeNotEnum,
-        comptime checkCustomCaptures(NotEnum, &.{.{ .custom = "Colour" }}),
+        comptime checkCustomCaptures(NotEnum, &.{.{ .custom = "Color" }}),
     );
 
     const Missing = struct {
         pub const steps = struct {
-            pub fn @"I pick {Colour}"(c: u8) void {
+            pub fn @"I pick {Color}"(c: u8) void {
                 _ = c;
             }
         };
     };
     try std.testing.expectError(
         BindError.UnknownCustomType,
-        comptime checkCustomCaptures(Missing, &.{.{ .custom = "Colour" }}),
+        comptime checkCustomCaptures(Missing, &.{.{ .custom = "Color" }}),
     );
 }
 
 test "each capture kind binds to the types the spec allows" {
     const M = struct {
-        pub const Colour = enum { red, green };
+        pub const Color = enum { red, green };
         pub const steps = struct {};
     };
     try std.testing.expectEqual(@as(i64, -19), comptime try bindCapture(M, i64, .int, "-19"));
@@ -1019,12 +1019,12 @@ test "each capture kind binds to the types the spec allows" {
     try std.testing.expectEqualStrings("save", comptime try bindCapture(M, []const u8, .word, "save"));
     try std.testing.expectEqualStrings("a b", comptime try bindCapture(M, []const u8, .anything, "a b"));
     try std.testing.expectEqualStrings("hi", comptime try bindCapture(M, []const u8, .string, "\"hi\""));
-    try std.testing.expectEqual(M.Colour.green, comptime try bindCapture(M, M.Colour, .{ .custom = "Colour" }, "green"));
+    try std.testing.expectEqual(M.Color.green, comptime try bindCapture(M, M.Color, .{ .custom = "Color" }, "green"));
 }
 
 test "an incompatible parameter type is reported, and an out of range integer" {
     const M = struct {
-        pub const Colour = enum { red, green };
+        pub const Color = enum { red, green };
         pub const Other = enum { a, b };
         pub const steps = struct {};
     };
@@ -1034,7 +1034,7 @@ test "an incompatible parameter type is reported, and an out of range integer" {
     try std.testing.expectError(BindError.IncompatibleCaptureType, comptime bindCapture(M, i64, .string, "\"x\""));
     try std.testing.expectError(
         BindError.IncompatibleCaptureType,
-        comptime bindCapture(M, M.Other, .{ .custom = "Colour" }, "green"),
+        comptime bindCapture(M, M.Other, .{ .custom = "Color" }, "green"),
     );
     try std.testing.expectError(BindError.IntegerOutOfRange, comptime bindCapture(M, u8, .int, "300"));
 }
@@ -1207,12 +1207,12 @@ test "a trailing slice must be const, and a custom name must be a type" {
     try std.testing.expectEqualStrings("Alice", ok[0].name);
 
     const M = struct {
-        pub const Colour = 3;
+        pub const Color = 3;
         pub const steps = struct {};
     };
     try std.testing.expectError(
         BindError.IncompatibleCaptureType,
-        comptime bindCapture(M, u8, .{ .custom = "Colour" }, "red"),
+        comptime bindCapture(M, u8, .{ .custom = "Color" }, "red"),
     );
 }
 
@@ -1337,21 +1337,22 @@ test "a step declaration that does not compile is blamed by its own name" {
 
 test "a custom capture with no enum behind it is blamed by its own declaration" {
     const Misspelled = struct {
-        pub const Colour = enum { red, green };
+        pub const Color = enum { red, green };
         pub const steps = struct {
-            pub fn @"I pick {Color}"(c: Colour) void {
+            // The capture names a type the module does not declare.
+            pub fn @"I pick {Colr}"(c: Color) void {
                 _ = c;
             }
         };
     };
     const f = failureOf(Misspelled);
     try std.testing.expectEqual(BindError.UnknownCustomType, f.err);
-    try std.testing.expectEqualStrings("I pick {Color}", f.decl);
+    try std.testing.expectEqualStrings("I pick {Colr}", f.decl);
 
     const NotEnum = struct {
-        pub const Colour = struct { r: u8 };
+        pub const Color = struct { r: u8 };
         pub const steps = struct {
-            pub fn @"I pick {Colour}"(c: u8) void {
+            pub fn @"I pick {Color}"(c: u8) void {
                 _ = c;
             }
         };

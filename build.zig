@@ -25,7 +25,13 @@ pub fn build(b: *std.Build) void {
     gen.root_module.addImport("codegen", codegen_mod);
     b.installArtifact(gen);
 
+    const tags = b.option([]const u8, "tags", "Tag expression selecting scenarios");
+    const filter = b.option([]const u8, "filter", "Test name substring");
+
     const mod_tests = b.addTest(.{ .root_module = lib });
+    // The same -Dfilter narrows the unit tests and the feature tests, so it
+    // means one thing across everything `zig build test` runs.
+    if (filter) |f| mod_tests.filters = b.allocator.dupe([]const u8, &[_][]const u8{f}) catch @panic("OOM");
     const test_step = b.step("test", "Run tests");
     test_step.dependOn(&b.addRunArtifact(mod_tests).step);
 
@@ -36,6 +42,8 @@ pub fn build(b: *std.Build) void {
         .steps = b.path("test/steps.zig"),
         .target = target,
         .optimize = optimize,
+        .tags = tags,
+        .filter = filter,
     });
 
     // Each example is a standalone project depending on this one by path, so it
@@ -43,7 +51,12 @@ pub fn build(b: *std.Build) void {
     // Listed rather than discovered: adding one edits this file, which is what
     // makes the build system notice it.
     const examples = [_][]const u8{
-        "basic",
+        "arguments",
+        "calculator",
+        "expressions",
+        "hooks",
+        "meta",
+        "structure",
     };
     const examples_step = b.step("examples", "Run each example's own tests");
     for (examples) |name| {
@@ -56,7 +69,6 @@ pub fn build(b: *std.Build) void {
         run.expectExitCode(0);
         examples_step.dependOn(&run.step);
     }
-    test_step.dependOn(examples_step);
 }
 
 /// Options for `addFeatureTests`.
