@@ -4,11 +4,11 @@ Cucumber-style BDD for Zig. Write `.feature` files in Gherkin, write step
 definitions as plain Zig functions, and get one `zig test` case per scenario.
 
 Step resolution happens at comptime: a feature file that names a step you have
-not defined is a compile error, not a runtime failure.
+not defined is a compile error.
 
 ## Requirements
 
-Zig `0.17.0-dev.892+54537285c` or newer, verified through `0.17.0-dev.1857+3c46da14d`.
+Zig `0.17.0` or newer.
 
 ## Install
 
@@ -94,7 +94,7 @@ Adding: two numbers [@math]
 ## Examples
 
 Each is a standalone project you can copy. Together they cover the whole
-feature set.
+feature set of this package.
 
 | Example | Shows |
 |---|---|
