@@ -23,4 +23,4 @@ jobs:
           version: ${{ steps.zig-version.outputs.version }}
           cache-key: ${{ matrix.step }}
 
-      - run: zig build ${{ matrix.step }}
+      - run: env -u ZIG_LOCAL_CACHE_DIR zig build ${{ matrix.step }}
