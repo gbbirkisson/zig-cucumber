@@ -1,0 +1,26 @@
+name: CI
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        step: [test, examples]
+
+    name: zig build ${{ matrix.step }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: zig-version
+        run: echo "version=$(awk '$1 == "zig" { print $2 }' .tool-versions)" >>"$GITHUB_OUTPUT"
+
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: ${{ steps.zig-version.outputs.version }}
+          cache-key: ${{ matrix.step }}
+
+      - run: zig build ${{ matrix.step }}
