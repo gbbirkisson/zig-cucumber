@@ -2,7 +2,7 @@
     .name = .calculator,
     .version = "0.0.0",
     .fingerprint = 0x247990c28360ccbd,
-    .minimum_zig_version = "0.17.0-dev.892+54537285c",
+    .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .zig_cucumber = .{ .path = "../.." },
     },

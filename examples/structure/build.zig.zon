@@ -2,7 +2,7 @@
     .name = .structure,
     .version = "0.0.0",
     .fingerprint = 0x6f0137eac662919b,
-    .minimum_zig_version = "0.17.0-dev.892+54537285c",
+    .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .zig_cucumber = .{ .path = "../.." },
     },
