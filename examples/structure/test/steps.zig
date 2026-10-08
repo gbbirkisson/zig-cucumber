@@ -20,13 +20,16 @@ pub const steps = struct {
     pub fn @"a feature background step"(w: *World) !void {
         w.note("feature");
     }
+
     pub fn @"a rule background step"(w: *World) !void {
         w.note("rule");
     }
+
     pub fn @"the trace is {string} and the row is {string}"(w: *World, want: []const u8, row: []const u8) !void {
         try @"the trace is {string}"(w, want);
         try std.testing.expect(std.mem.eql(u8, row, "one") or std.mem.eql(u8, row, "two"));
     }
+
     pub fn @"the trace is {string}"(w: *World, want: []const u8) !void {
         var buf: [64]u8 = undefined;
         var end: usize = 0;
