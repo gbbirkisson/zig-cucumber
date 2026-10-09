@@ -1,10 +1,32 @@
-# cucumber-zig
+<h1>
+  <p align="center">
+    <img src="img-cucumber.svg" alt="Logo" height="96">
+    <br>+<br>
+    <img src="img-zig.svg" alt="Logo" height="78">
+  </p>
+</h1>
 
-Cucumber-style BDD for Zig. Write `.feature` files in Gherkin, write step
-definitions as plain Zig functions, and get one `zig test` case per scenario.
+<p align="center">
+<b>Cucumber-style BDD for Zig</b>
+</p>
 
-Step resolution happens at comptime: a feature file that names a step you have
-not defined is a compile error.
+<hr>
+
+Write `.feature` files in Gherkin, write step definitions as plain Zig
+functions, and get one `zig test` case per scenario. Step resolution happens at
+comptime: a feature file that names a step you have not defined is a compile
+error.
+
+<!-- vim-markdown-toc GFM -->
+
+* [Requirements](#requirements)
+* [Install](#install)
+* [Use](#use)
+* [Examples](#examples)
+* [Selecting scenarios](#selecting-scenarios)
+* [Development](#development)
+
+<!-- vim-markdown-toc -->
 
 ## Requirements
 
