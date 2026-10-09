@@ -4,7 +4,7 @@
     .fingerprint = 0xd7f21435d1ae7aef,
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
-        .zig_cucumber = .{ .path = "../.." },
+        .cucumber_zig = .{ .path = "../.." },
     },
     .paths = .{""},
 }

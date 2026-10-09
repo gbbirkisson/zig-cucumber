@@ -1,4 +1,4 @@
-# zig-cucumber
+# cucumber-zig
 
 Cucumber-style BDD for Zig. Write `.feature` files in Gherkin, write step
 definitions as plain Zig functions, and get one `zig test` case per scenario.
@@ -13,7 +13,7 @@ Zig `0.17.0` or newer.
 ## Install
 
 ```bash
-zig fetch --save git+https://github.com/gbbirkisson/zig-cucumber
+zig fetch --save git+https://github.com/gbbirkisson/cucumber-zig
 ```
 
 ## Use
@@ -38,7 +38,7 @@ and the parameters are bound from the captures:
 
 ```zig
 const std = @import("std");
-const cucumber = @import("zig_cucumber");
+const cucumber = @import("cucumber_zig");
 
 pub const World = struct {
     total: i64 = 0,
@@ -63,14 +63,14 @@ And the wiring, in your `build.zig`:
 
 ```zig
 const std = @import("std");
-const cucumber_build = @import("zig_cucumber");
+const cucumber_build = @import("cucumber_zig");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
     const test_step = b.step("test", "Run feature tests");
-    const dep = b.dependency("zig_cucumber", .{ .target = target, .optimize = optimize });
+    const dep = b.dependency("cucumber_zig", .{ .target = target, .optimize = optimize });
 
     _ = cucumber_build.addFeatureTests(b, test_step, dep, .{
         .features = b.path("test/features"),

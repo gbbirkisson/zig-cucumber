@@ -1,7 +1,7 @@
 .{
-    .name = .zig_cucumber,
+    .name = .cucumber_zig,
     .version = "0.0.0",
-    .fingerprint = 0x7b196314091979d5,
+    .fingerprint = 0xa85ac482b4cf518,
     .minimum_zig_version = "0.17.0",
     .paths = .{
         "build.zig",

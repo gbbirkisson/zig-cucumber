@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const lib = b.addModule("zig_cucumber", .{
+    const lib = b.addModule("cucumber_zig", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
@@ -13,9 +13,9 @@ pub fn build(b: *std.Build) void {
     const codegen_mod = b.addModule("codegen", .{ .root_source_file = b.path("src/codegen.zig") });
 
     // The generator the consumer's build runs. Installed so a consumer can
-    // reach it with dep.artifact("zig-cucumber-gen").
+    // reach it with dep.artifact("cucumber-zig-gen").
     const gen = b.addExecutable(.{
-        .name = "zig-cucumber-gen",
+        .name = "cucumber-zig-gen",
         .root_module = b.createModule(.{
             .root_source_file = b.path("tools/gen.zig"),
             .target = b.graph.host,
@@ -99,8 +99,8 @@ pub fn addFeatureTests(
     return featureTests(
         b,
         test_step,
-        dep.artifact("zig-cucumber-gen"),
-        dep.module("zig_cucumber"),
+        dep.artifact("cucumber-zig-gen"),
+        dep.module("cucumber_zig"),
         options,
     );
 }
@@ -128,7 +128,7 @@ fn featureTests(
         .target = options.target,
         .optimize = options.optimize,
     });
-    steps_mod.addImport("zig_cucumber", cucumber);
+    steps_mod.addImport("cucumber_zig", cucumber);
     for (options.imports) |imp| steps_mod.addImport(imp.name, imp.module);
 
     const generated = b.createModule(.{
@@ -136,7 +136,7 @@ fn featureTests(
         .target = options.target,
         .optimize = options.optimize,
     });
-    generated.addImport("zig_cucumber", cucumber);
+    generated.addImport("cucumber_zig", cucumber);
     generated.addImport("steps", steps_mod);
 
     const tests = b.addTest(.{ .root_module = generated });

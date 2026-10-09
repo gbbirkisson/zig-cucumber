@@ -1,5 +1,5 @@
 const std = @import("std");
-const cucumber = @import("zig_cucumber");
+const cucumber = @import("cucumber_zig");
 
 pub const World = struct {
     arena: std.heap.ArenaAllocator,

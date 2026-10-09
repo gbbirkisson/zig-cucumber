@@ -1,5 +1,5 @@
 const std = @import("std");
-const cucumber_build = @import("zig_cucumber");
+const cucumber_build = @import("cucumber_zig");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
@@ -12,7 +12,7 @@ pub fn build(b: *std.Build) void {
     });
 
     const test_step = b.step("test", "Run feature tests");
-    const dep = b.dependency("zig_cucumber", .{ .target = target, .optimize = optimize });
+    const dep = b.dependency("cucumber_zig", .{ .target = target, .optimize = optimize });
 
     _ = cucumber_build.addFeatureTests(b, test_step, dep, .{
         .features = b.path("test/features"),

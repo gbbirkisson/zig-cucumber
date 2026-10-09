@@ -1,5 +1,5 @@
 const std = @import("std");
-const cucumber = @import("zig_cucumber");
+const cucumber = @import("cucumber_zig");
 
 const Person = struct { name: []const u8, age: u32 };
 
